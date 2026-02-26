@@ -16,3 +16,13 @@
 - The system is built around **eventual consistency** with conflict resolution
 
 ---
+
+### Functional Requirements
+- User registration, login, and authentication
+- Upload files (single + chunked for large files)
+- Download files via secure, time-limited URLs
+- Automatic file sync across devices
+- File versioning (view and restore previous versions)
+- Share files/folders with permissions (view / edit)
+- Folder hierarchy support
+- File search by name and metadata
