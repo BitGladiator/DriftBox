@@ -102,3 +102,10 @@
 
 ### Sync Flow (Cross-Device)
 <img src="images/SyncFlow.jpg" width="700" />
+
+
+---
+
+
+## 6. Database Schema
+<img src="images/DatabaseSchema.jpg" width="700" />
