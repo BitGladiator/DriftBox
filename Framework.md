@@ -39,16 +39,54 @@
 
 ---
 
-## 3. Architecture Overview
+## 2. Architecture Overview
 <img src="images/Architecture.jpg" width="600" />
 
 ---
 
-## 4. Core Services
+## 3. Core Services
 
-### 4.1 Auth Service
+### 3.1 Auth Service
 - Handles user registration and login
 - Issues **JWT access tokens** (short-lived, 15min)
 - Issues **Refresh tokens** (long-lived, 30 days, stored in DB)
 - OAuth2 support (Google login)
 - Responsibilities: signup, login, logout, token refresh
+
+### 3.2 Upload Service
+- Accepts file chunks from the client
+- Each chunk is **4MB** by default
+- Computes **SHA-256 hash** of each chunk for deduplication
+- If hash already exists in storage then skip upload (dedup hit)
+- Stores chunks in **MinIO** object storage
+- Fires `file.uploaded` event to RabbitMQ on completion
+- Supports **resumable uploads** (tracks which chunks are done)
+
+### 3.3 Metadata Service
+- Manages the logical file/folder structure per user
+- Stores: file name, size, type, folder path, version history, chunk references
+- Backed by **PostgreSQL**
+- Hot metadata (recently accessed files) cached in **Redis**
+- Handles versioning — each upload creates a new version record
+
+### 3.4 Sync Service
+- Listens for `file.uploaded` and `file.changed` RabbitMQ events
+- Determines which other devices of the user need updating
+- Notifies those devices via **WebSocket** connections
+- Client then fetches only the changed chunks (delta sync)
+- Handles **conflict detection:** if two devices edit the same file then creates a conflict copy.
+
+### 3.5 Share & Notification Service
+- Manages shared file/folder permissions (read / write)
+- Generates **signed share links** with expiry
+- Sends notifications: email, in-app, or webhook
+- RBAC (Role-Based Access Control) for shared resources
+
+### 4.6 API Gateway (NGINX)
+- Single entry point for all clients
+- Responsibilities:
+  - JWT validation
+  - Rate limiting (per user/IP)
+  - Request routing to correct microservice
+  - SSL termination
+
