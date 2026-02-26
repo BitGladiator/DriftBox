@@ -26,3 +26,10 @@
 - Share files/folders with permissions (view / edit)
 - Folder hierarchy support
 - File search by name and metadata
+
+### Non-Functional Requirements
+- **Availability:** 99.9% uptime target
+- **Durability:** No data loss (replicated storage)
+- **Scalability:** Designed to handle millions of users
+- **Security:** Encrypted at rest and in transit (TLS + AES-256)
+- **Low Latency:** Fast uploads via chunking + parallel transfers
