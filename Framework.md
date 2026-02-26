@@ -41,3 +41,14 @@
 
 ## 3. Architecture Overview
 <img src="images/Architecture.jpg" width="600" />
+
+---
+
+## 4. Core Services
+
+### 4.1 Auth Service
+- Handles user registration and login
+- Issues **JWT access tokens** (short-lived, 15min)
+- Issues **Refresh tokens** (long-lived, 30 days, stored in DB)
+- OAuth2 support (Google login)
+- Responsibilities: signup, login, logout, token refresh
