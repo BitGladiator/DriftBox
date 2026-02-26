@@ -96,3 +96,9 @@
 
 ### Upload Flow
 <img src="images/UploadFlow.jpg" width="700" />
+
+### Download Flow
+<img src="images/DownloadFlow.jpg" width="700" />
+
+### Sync Flow (Cross-Device)
+<img src="images/SyncFlow.jpg" width="700" />
