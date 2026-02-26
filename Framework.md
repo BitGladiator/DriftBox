@@ -82,7 +82,7 @@
 - Sends notifications: email, in-app, or webhook
 - RBAC (Role-Based Access Control) for shared resources
 
-### 4.6 API Gateway (NGINX)
+### 3.6 API Gateway (NGINX)
 - Single entry point for all clients
 - Responsibilities:
   - JWT validation
