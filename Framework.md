@@ -33,3 +33,11 @@
 - **Scalability:** Designed to handle millions of users
 - **Security:** Encrypted at rest and in transit (TLS + AES-256)
 - **Low Latency:** Fast uploads via chunking + parallel transfers
+
+### Capacity Estimates (baseline)
+<img src="images/Metrics.jpg" width="600" />
+
+---
+
+## 3. Architecture Overview
+<img src="images/Architecture.jpg" width="600" />
