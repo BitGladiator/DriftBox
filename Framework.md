@@ -40,7 +40,7 @@
 ---
 
 ## 2. Architecture Overview
-<img src="images/Architecture.jpg" width="600" />
+<img src="images/Architecture.jpg" width="700" />
 
 ---
 
@@ -90,3 +90,9 @@
   - Request routing to correct microservice
   - SSL termination
 
+---
+
+## 4. Data Flow
+
+### Upload Flow
+<img src="images/UploadFlow.jpg" width="700" />
