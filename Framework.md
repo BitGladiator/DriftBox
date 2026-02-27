@@ -134,7 +134,7 @@
 ## 8. Tech Stack
 <img src="images/TechStack.jpg" width="700" />
 
-## 11. Monitoring & Observability
+## 9. Monitoring & Observability
 
 ### Stack
 <img src="images/MonitoringStack.jpg" width="700" />
@@ -162,7 +162,7 @@
 
 ---
 
-## 12. CI/CD Pipeline
+## 10. CI/CD Pipeline
 ### Strategy
 - **CI** runs on every push and PR — lint, test, build check across all 5 services in parallel
 - **Staging** deploys automatically on every merge to `main`
