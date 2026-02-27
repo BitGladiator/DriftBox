@@ -133,3 +133,42 @@
 
 ## 8. Tech Stack
 <img src="images/TechStack.jpg" width="700" />
+
+## 11. Monitoring & Observability
+
+### Stack
+<img src="images/MonitoringStack.jpg" width="700" />
+
+### What to Track Per Service
+**Upload Service** — total chunks uploaded, dedup hit rate, upload duration histogram , failed uploads by error type
+
+**Sync Service** — active WebSocket connections, RabbitMQ events published, sync lag (time between upload completion and device notification)
+
+**Metadata Service** — DB query duration (for slow query detection), Redis cache hit ratio
+
+**All Services** — HTTP request rate, error rate, and p95 latency (RED metrics), pod CPU and memory, RabbitMQ queue depth, MinIO storage usage
+
+### Grafana Dashboards to Build
+1. **Service Overview** — request rate, error rate, and latency across all services
+2. **Upload Pipeline** — chunk throughput, dedup hit rate, upload duration
+3. **Sync Health** — active connections, sync lag, RabbitMQ queue depth
+4. **Infrastructure** — pod CPU/memory, DB connections, Redis memory
+
+### Key Alerts to Configure (AlertManager)
+- **HighErrorRate** — service exceeds 5% HTTP 5xx error rate for 2+ minutes
+- **RabbitMQQueueBacklog** — queue depth exceeds 1000 messages for 5+ minutes (sync falling behind)
+- **PodMemoryHigh** — any pod exceeds 500MB memory for 5+ minutes
+- **ServiceDown** — Prometheus cannot reach a service's `/metrics` endpoint
+
+---
+
+## 12. CI/CD Pipeline
+### Strategy
+- **CI** runs on every push and PR — lint, test, build check across all 5 services in parallel
+- **Staging** deploys automatically on every merge to `main`
+- **Production** deploys only on tagged releases 
+- Platform: **GitHub Actions**
+
+
+### Dockerfile Approach
+Every service uses a **multi-stage Dockerfile** — a builder stage installs only production dependencies, the final stage copies them into a clean Alpine image. This keeps image sizes small and avoids shipping dev tooling to production.
