@@ -107,5 +107,12 @@
 ---
 
 
-## 6. Database Schema
+## 5. Database Schema
 <img src="images/DatabaseSchema.jpg" width="700" />
+
+---
+
+## 6. API Design
+
+### Auth
+<img src="images/AuthAPI.jpg" width="600" />
