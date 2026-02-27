@@ -116,3 +116,6 @@
 
 ### Auth
 <img src="images/AuthAPI.jpg" width="600" />
+
+### Files
+<img src="images/FilesAPI.jpg" width="600" />
