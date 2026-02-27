@@ -128,3 +128,8 @@
 
 ### Share
 <img src="images/ShareAPI.jpg" width="600" />
+
+---
+
+## 8. Tech Stack
+<img src="images/TechStack.jpg" width="700" />
