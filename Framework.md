@@ -119,3 +119,6 @@
 
 ### Files
 <img src="images/FilesAPI.jpg" width="600" />
+
+### Upload
+<img src="images/UploadAPI.jpg" width="600" />
