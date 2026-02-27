@@ -122,3 +122,9 @@
 
 ### Upload
 <img src="images/UploadAPI.jpg" width="600" />
+
+### Download
+<img src="images/DownloadAPI.jpg" width="600" />
+
+### Share
+<img src="images/ShareAPI.jpg" width="600" />
