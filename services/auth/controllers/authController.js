@@ -1,7 +1,7 @@
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const crypto  = require('crypto');
-const db      = require('../../../shared/db');
+const db      = require('../shared/db');
 
 const ACCESS_SECRET   = process.env.JWT_SECRET;
 const ACCESS_EXPIRES  = process.env.JWT_ACCESS_EXPIRES_IN  || '15m';
@@ -35,7 +35,6 @@ const signup = async (req, res, next) => {
     if (password.length < 8)
       return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
-   
     const existing = await db.query(
       'SELECT user_id FROM users WHERE email = $1',
       [email.toLowerCase()]
@@ -43,10 +42,8 @@ const signup = async (req, res, next) => {
     if (existing.rows.length > 0)
       return res.status(409).json({ error: 'Email already registered' });
 
-    
     const passwordHash = await bcrypt.hash(password, 12);
 
-   
     const result = await db.query(
       `INSERT INTO users (email, password_hash)
        VALUES ($1, $2)
@@ -55,11 +52,9 @@ const signup = async (req, res, next) => {
     );
     const user = result.rows[0];
 
-   
     const accessToken  = generateAccessToken(user.user_id, user.email);
     const refreshToken = generateRefreshToken();
 
-   
     await db.query(
       `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
        VALUES ($1, $2, $3)`,
@@ -89,7 +84,6 @@ const login = async (req, res, next) => {
     if (!email || !password)
       return res.status(400).json({ error: 'Email and password are required' });
 
-   
     const result = await db.query(
       'SELECT user_id, email, password_hash, storage_used, storage_quota FROM users WHERE email = $1',
       [email.toLowerCase()]
@@ -99,16 +93,13 @@ const login = async (req, res, next) => {
 
     const user = result.rows[0];
 
-   
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password' });
 
-   
     const accessToken  = generateAccessToken(user.user_id, user.email);
     const refreshToken = generateRefreshToken();
 
-   
     await db.query(
       `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
        VALUES ($1, $2, $3)`,
@@ -118,9 +109,9 @@ const login = async (req, res, next) => {
     res.json({
       message: 'Login successful',
       user: {
-        userId:      user.user_id,
-        email:       user.email,
-        storageUsed: user.storage_used,
+        userId:       user.user_id,
+        email:        user.email,
+        storageUsed:  user.storage_used,
         storageQuota: user.storage_quota,
       },
       tokens: { accessToken, refreshToken },
@@ -140,7 +131,6 @@ const refresh = async (req, res, next) => {
 
     const tokenHash = hashRefreshToken(refreshToken);
 
- 
     const result = await db.query(
       `SELECT rt.token_id, rt.user_id, rt.expires_at, u.email
        FROM refresh_tokens rt
@@ -154,11 +144,9 @@ const refresh = async (req, res, next) => {
 
     const stored = result.rows[0];
 
-   
     if (new Date() > new Date(stored.expires_at))
       return res.status(401).json({ error: 'Refresh token expired — please log in again' });
 
-  
     await db.query('DELETE FROM refresh_tokens WHERE token_id = $1', [stored.token_id]);
 
     const newAccessToken  = generateAccessToken(stored.user_id, stored.email);
@@ -189,11 +177,9 @@ const logout = async (req, res, next) => {
     if (!refreshToken)
       return res.status(400).json({ error: 'Refresh token is required' });
 
-    const tokenHash = hashRefreshToken(refreshToken);
-
     await db.query(
       'DELETE FROM refresh_tokens WHERE token_hash = $1',
-      [tokenHash]
+      [hashRefreshToken(refreshToken)]
     );
 
     res.json({ message: 'Logged out successfully' });

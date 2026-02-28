@@ -1,13 +1,14 @@
-
+# ─── Stage 1: Install dependencies ───────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
+COPY services/upload/package*.json ./
+RUN npm install --only=production
 
-
+# ─── Stage 2: Production image ───────────────────────────────
 FROM node:20-alpine
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
-COPY . .
-EXPOSE 3003
+COPY shared/ ./shared/
+COPY services/upload/ ./
+EXPOSE 3002
 CMD ["node", "index.js"]
