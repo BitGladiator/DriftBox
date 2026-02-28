@@ -1,11 +1,11 @@
 require('dotenv').config();
-const express       = require('express');
-const cors          = require('cors');
-const helmet        = require('helmet');
-const client        = require('prom-client');
-const storage       = require('./shared/storage');
-const mq            = require('./shared/rabbitmq');
-const uploadRoutes  = require('./routes/upload');
+const express = require('express');
+const cors  = require('cors');
+const helmet = require('helmet');
+const client = require('prom-client');
+const storage = require('./shared/storage');
+const mq  = require('./shared/rabbitmq');
+const uploadRoutes = require('./routes/upload');
 
 const app  = express();
 const PORT = process.env.PORT || 3002;

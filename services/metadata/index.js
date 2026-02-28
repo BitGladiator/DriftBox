@@ -1,9 +1,9 @@
 require('dotenv').config();
-const express     = require('express');
-const cors        = require('cors');
-const helmet      = require('helmet');
-const client      = require('prom-client');
-const db          = require('./shared/db');
+const express = require('express');
+const cors    = require('cors');
+const helmet  = require('helmet');
+const client  = require('prom-client');
+const db      = require('./shared/db');
 const fileRoutes  = require('./routes/files');
 
 const app  = express();
