@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-service
+  namespace: driftbox
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: metadata-service
+  template:
+    metadata:
+      labels:
+        app: metadata-service
+    spec:
+      containers:
+        - name: metadata
+          image: ghcr.io/YOUR_GITHUB_USERNAME/driftbox-metadata:latest
+          ports:
+            - containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: driftbox-config
+            - secretRef:
+                name: driftbox-secrets
+          env:
+            - name: PORT
+              value: "3003"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metadata-service
+  namespace: driftbox
+spec:
+  selector:
+    app: metadata-service
+  ports:
+    - port: 80
+      targetPort: 3003

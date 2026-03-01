@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sync-service
+  namespace: driftbox
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sync-service
+  template:
+    metadata:
+      labels:
+        app: sync-service
+    spec:
+      containers:
+        - name: sync
+          image: ghcr.io/BitGladiator/driftbox-sync:latest
+          ports:
+            - containerPort: 3004
+          envFrom:
+            - configMapRef:
+                name: driftbox-config
+            - secretRef:
+                name: driftbox-secrets
+          env:
+            - name: PORT
+              value: "3004"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3004
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3004
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sync-service
+  namespace: driftbox
+spec:
+  selector:
+    app: sync-service
+  ports:
+    - port: 80
+      targetPort: 3004
