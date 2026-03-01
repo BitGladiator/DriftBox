@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
 
-  
+  # ─── Infrastructure ───────────────────────────────────────────
 
   postgres:
     image: postgres:16-alpine
@@ -13,7 +13,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./migrations:/docker-entrypoint-initdb.d
@@ -75,7 +75,6 @@ services:
       retries: 5
 
   # ─── Services ─────────────────────────────────────────────────
-  # context: . means build from project ROOT so Dockerfiles can access shared/
 
   auth:
     build:
@@ -161,9 +160,77 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ─── Monitoring ───────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: driftbox-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - auth
+      - upload
+      - metadata
+      - sync
+      - share
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: driftbox-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: driftbox123
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: driftbox-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: driftbox-promtail
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
 
 volumes:
   postgres_data:
   redis_data:
   rabbitmq_data:
   minio_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:

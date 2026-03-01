@@ -1,0 +1,35 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  - job_name: 'auth'
+    static_configs:
+      - targets: ['auth:3001']
+        labels:
+          service: 'auth'
+
+  - job_name: 'upload'
+    static_configs:
+      - targets: ['upload:3002']
+        labels:
+          service: 'upload'
+
+  - job_name: 'metadata'
+    static_configs:
+      - targets: ['metadata:3003']
+        labels:
+          service: 'metadata'
+
+  - job_name: 'sync'
+    static_configs:
+      - targets: ['sync:3004']
+        labels:
+          service: 'sync'
+
+  - job_name: 'share'
+    static_configs:
+      - targets: ['share:3005']
+        labels:
+          service: 'share'
