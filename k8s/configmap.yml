@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: driftbox-config
+  namespace: driftbox
+data:
+  NODE_ENV: "production"
+  POSTGRES_HOST: "postgresql"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "driftbox"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  RABBITMQ_HOST: "rabbitmq"
+  RABBITMQ_PORT: "5672"
+  MINIO_ENDPOINT: "minio"
+  MINIO_PORT: "9000"
+  MINIO_USE_SSL: "false"
+  MINIO_BUCKET: "driftbox-chunks"
+  CHUNK_SIZE_MB: "4"
+  MAX_PARALLEL_CHUNKS: "5"
+  SIGNED_URL_EXPIRY_SECONDS: "900"
+  JWT_ACCESS_EXPIRES_IN: "15m"
+  JWT_REFRESH_EXPIRES_IN: "30d"
