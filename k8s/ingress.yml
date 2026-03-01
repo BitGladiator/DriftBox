@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: driftbox-ingress
+  namespace: driftbox
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: driftbox.local
+      http:
+        paths:
+          - path: /auth(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+          - path: /upload(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: upload-service
+                port:
+                  number: 80
+          - path: /files(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: metadata-service
+                port:
+                  number: 80
+          - path: /sync(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: sync-service
+                port:
+                  number: 80
+          - path: /share(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: share-service
+                port:
+                  number: 80
