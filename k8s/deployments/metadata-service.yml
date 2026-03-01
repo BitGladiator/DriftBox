@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: metadata
-          image: ghcr.io/YOUR_GITHUB_USERNAME/driftbox-metadata:latest
+          image: driftbox-metadata:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 3003
           envFrom:

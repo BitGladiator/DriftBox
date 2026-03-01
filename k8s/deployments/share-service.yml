@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: share
-          image: ghcr.io/BitGladiator/driftbox-share:latest
+          image: driftbox-share:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 3005
           envFrom:
