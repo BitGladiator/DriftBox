@@ -9,30 +9,26 @@ on:
 env:
   REGISTRY: ghcr.io
   OWNER: bitgladiator
+  KUBECONFIG: /Users/karansharma/.kube/config
 
 jobs:
   deploy:
     name: Deploy to K8s
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-
-      - name: Configure kubectl
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+      - name: Verify kubectl connection
+        run: kubectl get nodes
 
       - name: Get short SHA
         id: sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
-      - name: Update image tags in deployments
+      - name: Update image tags
         run: |
           kubectl set image deployment/auth-service \
             auth=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-auth:sha-${{ steps.sha.outputs.SHORT_SHA }} \
