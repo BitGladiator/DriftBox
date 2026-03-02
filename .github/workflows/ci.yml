@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test — ${{ matrix.service }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service: [auth, upload, metadata, sync, share]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: services/${{ matrix.service }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: services/${{ matrix.service }}
+        run: npm install
+
+      - name: Run tests
+        working-directory: services/${{ matrix.service }}
+        run: npm test
+
+  validate-k8s:
+    name: Validate Kubernetes Manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Validate all manifests
+        run: |
+          kubectl apply --dry-run=client -f k8s/namespace.yml
+          kubectl apply --dry-run=client -f k8s/configmap.yml
+          kubectl apply --dry-run=client -f k8s/deployments/
+          kubectl apply --dry-run=client -f k8s/statefulsets/
+          kubectl apply --dry-run=client -f k8s/hpa/
+          kubectl apply --dry-run=client -f k8s/ingress.yml
+          kubectl apply --dry-run=client -f k8s/monitoring/

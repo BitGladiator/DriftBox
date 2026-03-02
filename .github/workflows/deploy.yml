@@ -1,0 +1,69 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build & Push Images"]
+    types: [completed]
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: bitgladiator
+
+jobs:
+  deploy:
+    name: Deploy to K8s
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Get short SHA
+        id: sha
+        run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Update image tags in deployments
+        run: |
+          kubectl set image deployment/auth-service \
+            auth=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-auth:sha-${{ steps.sha.outputs.SHORT_SHA }} \
+            -n driftbox
+
+          kubectl set image deployment/upload-service \
+            upload=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-upload:sha-${{ steps.sha.outputs.SHORT_SHA }} \
+            -n driftbox
+
+          kubectl set image deployment/metadata-service \
+            metadata=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-metadata:sha-${{ steps.sha.outputs.SHORT_SHA }} \
+            -n driftbox
+
+          kubectl set image deployment/sync-service \
+            sync=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-sync:sha-${{ steps.sha.outputs.SHORT_SHA }} \
+            -n driftbox
+
+          kubectl set image deployment/share-service \
+            share=${{ env.REGISTRY }}/${{ env.OWNER }}/driftbox-share:sha-${{ steps.sha.outputs.SHORT_SHA }} \
+            -n driftbox
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/auth-service     -n driftbox --timeout=120s
+          kubectl rollout status deployment/upload-service   -n driftbox --timeout=120s
+          kubectl rollout status deployment/metadata-service -n driftbox --timeout=120s
+          kubectl rollout status deployment/sync-service     -n driftbox --timeout=120s
+          kubectl rollout status deployment/share-service    -n driftbox --timeout=120s
+
+      - name: Verify all pods running
+        run: kubectl get pods -n driftbox
+
+      - name: Notify success
+        run: echo "Deployed sha-${{ steps.sha.outputs.SHORT_SHA }} to Kubernetes successfully"
