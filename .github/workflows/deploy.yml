@@ -24,6 +24,17 @@ jobs:
       - name: Verify kubectl connection
         run: kubectl get nodes
 
+      - name: Ensure namespace and base manifests exist
+        run: |
+          kubectl apply -f k8s/namespace.yml
+          kubectl apply -f k8s/configmap.yml
+          kubectl apply -f k8s/secrets.yml
+          kubectl apply -f k8s/statefulsets/
+          kubectl apply -f k8s/deployments/
+          kubectl apply -f k8s/hpa/
+          kubectl apply -f k8s/ingress.yml
+          kubectl apply -f k8s/monitoring/
+
       - name: Get short SHA
         id: sha
         run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
@@ -62,4 +73,4 @@ jobs:
         run: kubectl get pods -n driftbox
 
       - name: Notify success
-        run: echo "Deployed sha-${{ steps.sha.outputs.SHORT_SHA }} to Kubernetes successfully"
+        run: echo "✅ Deployed sha-${{ steps.sha.outputs.SHORT_SHA }} to Kubernetes successfully"
