@@ -16,7 +16,6 @@ spec:
       containers:
         - name: auth
           image: driftbox-auth:latest
-          imagePullPolicy: Never
           ports:
             - containerPort: 3001
           envFrom:

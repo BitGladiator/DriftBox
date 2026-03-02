@@ -16,7 +16,6 @@ spec:
       containers:
         - name: metadata
           image: driftbox-metadata:latest
-          imagePullPolicy: Never
           ports:
             - containerPort: 3003
           envFrom:

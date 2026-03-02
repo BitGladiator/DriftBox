@@ -16,7 +16,6 @@ spec:
       containers:
         - name: sync
           image: driftbox-sync:latest
-          imagePullPolicy: Never
           ports:
             - containerPort: 3004
           envFrom:

@@ -16,7 +16,6 @@ spec:
       containers:
         - name: upload
           image: driftbox-upload:latest
-          imagePullPolicy: Never
           ports:
             - containerPort: 3002
           envFrom:
