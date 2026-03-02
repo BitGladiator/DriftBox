@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: sync
-          image: driftbox-sync:latest
+          image: ghcr.io/bitgladiator/driftbox-sync:latest
           ports:
             - containerPort: 3004
           envFrom:

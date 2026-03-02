@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: upload
-          image: driftbox-upload:latest
+          image: ghcr.io/bitgladiator/driftbox-upload:latest
           ports:
             - containerPort: 3002
           envFrom:

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: metadata
-          image: driftbox-metadata:latest
+          image: ghcr.io/bitgladiator/driftbox-metadata:latest
           ports:
             - containerPort: 3003
           envFrom:

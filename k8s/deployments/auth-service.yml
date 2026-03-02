@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: driftbox-auth:latest
+          image: ghcr.io/bitgladiator/driftbox-auth:latest
           ports:
             - containerPort: 3001
           envFrom:

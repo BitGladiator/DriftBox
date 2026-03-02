@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: share
-          image: driftbox-share:latest
+          image: ghcr.io/bitgladiator/driftbox-share:latest
           ports:
             - containerPort: 3005
           envFrom:
