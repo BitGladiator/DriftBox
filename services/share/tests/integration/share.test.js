@@ -39,9 +39,6 @@ beforeAll((done) => { server = app.listen(0, done); });
 afterAll((done)  => { server.close(done); });
 beforeEach(() => jest.clearAllMocks());
 
-// ═══════════════════════════════════════════════════════════════
-// HEALTH
-// ═══════════════════════════════════════════════════════════════
 describe('GET /health', () => {
 
   test('200 — ok when db reachable', async () => {
@@ -59,9 +56,6 @@ describe('GET /health', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /share/:linkId  — PUBLIC route (no auth needed)
-// ═══════════════════════════════════════════════════════════════
 describe('GET /share/:linkId (public)', () => {
 
   test('404 — link does not exist', async () => {
@@ -92,7 +86,7 @@ describe('GET /share/:linkId (public)', () => {
       name: 'photo.jpg', size: 2048, mime_type: 'image/jpeg',
       folder_path: '/', owner_email: 'owner@test.com',
     }] });
-    // No Authorization header — should still work
+    
     const res = await request(app).get('/share/l1');
     expect(res.status).toBe(200);
     expect(res.body.file.name).toBe('photo.jpg');
@@ -114,9 +108,7 @@ describe('GET /share/:linkId (public)', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// POST /share  — requires auth
-// ═══════════════════════════════════════════════════════════════
+
 describe('POST /share', () => {
   const token = makeToken();
 
@@ -196,9 +188,7 @@ describe('POST /share', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// DELETE /share/:linkId  — requires auth
-// ═══════════════════════════════════════════════════════════════
+
 describe('DELETE /share/:linkId', () => {
   const token = makeToken();
 
@@ -227,14 +217,12 @@ describe('DELETE /share/:linkId', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /share  — requires auth (list my links)
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /share (my links)', () => {
   const token = makeToken();
 
   test('401 — no token', async () => {
-    // Note: GET /share/:linkId is public but GET /share (exact) requires auth
+    
     const res = await request(app).get('/share');
     expect(res.status).toBe(401);
   });
@@ -266,9 +254,7 @@ describe('GET /share (my links)', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Unknown routes
-// ═══════════════════════════════════════════════════════════════
+
 describe('Unknown routes', () => {
   test('404 — returns not found for unknown paths', async () => {
     const res = await request(app).get('/completely-unknown');

@@ -16,10 +16,10 @@ const mq = require('../shared/rabbitmq');
 const { createShareLink, accessShareLink, revokeShareLink, myShareLinks } =
   require('../../controllers/shareController');
 
-// ── Helpers ───────────────────────────────────────────────────
+
 const mockRes = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
+  const res = {}; 
+  res.status = jest.fn().mockReturnValue(res); 
   res.json   = jest.fn().mockReturnValue(res);
   return res;
 };
@@ -34,9 +34,7 @@ const makeReq = (overrides = {}) => ({
 
 beforeEach(() => jest.clearAllMocks());
 
-// ═══════════════════════════════════════════════════════════════
-// createShareLink
-// ═══════════════════════════════════════════════════════════════
+
 describe('createShareLink()', () => {
 
   test('400 — missing fileId', async () => {
@@ -114,9 +112,9 @@ describe('createShareLink()', () => {
     const res = mockRes();
     await createShareLink(req, res, mockNext);
 
-    // Verify expiresAt was passed to the INSERT query
+   
     const insertArgs = db.query.mock.calls[1][1];
-    expect(insertArgs[3]).not.toBeNull(); // 4th param = expiresAt
+    expect(insertArgs[3]).not.toBeNull(); 
     const body = res.json.mock.calls[0][0];
     expect(body.link.expiresAt).not.toBeNull();
   });
@@ -134,7 +132,7 @@ describe('createShareLink()', () => {
     await createShareLink(req, res, mockNext);
 
     const insertArgs = db.query.mock.calls[1][1];
-    expect(insertArgs[3]).toBeNull(); // no expiry
+    expect(insertArgs[3]).toBeNull(); 
   });
 
   test('201 — publishes FILE_SHARED event to RabbitMQ', async () => {
@@ -170,9 +168,7 @@ describe('createShareLink()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// accessShareLink
-// ═══════════════════════════════════════════════════════════════
+
 describe('accessShareLink()', () => {
 
   test('404 — link not found', async () => {
@@ -248,13 +244,11 @@ describe('accessShareLink()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// revokeShareLink
-// ═══════════════════════════════════════════════════════════════
+
 describe('revokeShareLink()', () => {
 
   test('404 — link not found or belongs to different user', async () => {
-    db.query.mockResolvedValueOnce({ rows: [] }); // DELETE returned nothing
+    db.query.mockResolvedValueOnce({ rows: [] }); 
     const req = makeReq({ params: { linkId: 'not-mine' } });
     const res = mockRes();
     await revokeShareLink(req, res, mockNext);
@@ -295,9 +289,7 @@ describe('revokeShareLink()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// myShareLinks
-// ═══════════════════════════════════════════════════════════════
+
 describe('myShareLinks()', () => {
 
   test('200 — returns empty array when no links exist', async () => {
