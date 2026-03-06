@@ -1,10 +1,6 @@
 'use strict';
 
-/**
- * Integration tests — metadata-service
- * All routes require JWT auth.
- * DB and Redis are mocked — no real infrastructure needed.
- */
+
 
 jest.mock('./shared/db', () => ({
   query:       jest.fn(),
@@ -53,9 +49,7 @@ beforeAll((done) => { server = app.listen(0, done); });
 afterAll((done)  => { server.close(done); });
 beforeEach(() => jest.clearAllMocks());
 
-// ═══════════════════════════════════════════════════════════════
-// HEALTH
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /health', () => {
 
   test('200 — ok when DB reachable', async () => {
@@ -73,9 +67,7 @@ describe('GET /health', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Auth guard — all /files routes protected
-// ═══════════════════════════════════════════════════════════════
+
 describe('Auth guard', () => {
   const routes = [
     { method: 'get',    path: '/files' },
@@ -94,9 +86,7 @@ describe('Auth guard', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /files
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /files', () => {
   const token = makeToken();
 
@@ -145,9 +135,6 @@ describe('GET /files', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /files/search
-// ═══════════════════════════════════════════════════════════════
 describe('GET /files/search', () => {
   const token = makeToken();
 
@@ -184,9 +171,7 @@ describe('GET /files/search', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /files/:id
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /files/:id', () => {
   const token = makeToken();
 
@@ -236,9 +221,7 @@ describe('GET /files/:id', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// DELETE /files/:id
-// ═══════════════════════════════════════════════════════════════
+
 describe('DELETE /files/:id', () => {
   const token = makeToken();
 
@@ -267,9 +250,7 @@ describe('DELETE /files/:id', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /files/:id/versions
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /files/:id/versions', () => {
   const token = makeToken();
 
@@ -301,9 +282,7 @@ describe('GET /files/:id/versions', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// POST /files/:id/restore/:versionId
-// ═══════════════════════════════════════════════════════════════
+
 describe('POST /files/:id/restore/:versionId', () => {
   const token = makeToken();
 
@@ -349,9 +328,7 @@ describe('POST /files/:id/restore/:versionId', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Unknown routes
-// ═══════════════════════════════════════════════════════════════
+
 describe('Unknown routes', () => {
   test('404 — returns not found', async () => {
     const res = await request(app).get('/completely-unknown');

@@ -22,7 +22,7 @@ const {
   searchFiles,
 } = require('../../controllers/filesController');
 
-// ── Helpers ───────────────────────────────────────────────────
+
 const mockRes = () => {
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
@@ -55,9 +55,7 @@ const makeFileRow = (overrides = {}) => ({
 
 beforeEach(() => jest.clearAllMocks());
 
-// ═══════════════════════════════════════════════════════════════
-// listFiles
-// ═══════════════════════════════════════════════════════════════
+
 describe('listFiles()', () => {
 
   test('returns cached response if Redis hit', async () => {
@@ -68,25 +66,25 @@ describe('listFiles()', () => {
     const res = mockRes();
     await listFiles(req, res, mockNext);
 
-    expect(db.query).not.toHaveBeenCalled(); // DB never touched
+    expect(db.query).not.toHaveBeenCalled(); 
     expect(res.json).toHaveBeenCalledWith(cached);
   });
 
   test('queries DB on cache miss and caches the result', async () => {
-    redis.get.mockResolvedValueOnce(null); // cache miss
+    redis.get.mockResolvedValueOnce(null);
     redis.setex.mockResolvedValue('OK');
 
     const fileRow = makeFileRow();
     db.query
-      .mockResolvedValueOnce({ rows: [fileRow] })          // SELECT files
-      .mockResolvedValueOnce({ rows: [{ count: '1' }] });  // COUNT
+      .mockResolvedValueOnce({ rows: [fileRow] })          
+      .mockResolvedValueOnce({ rows: [{ count: '1' }] });  
 
     const req = makeReq({ query: {} });
     const res = mockRes();
     await listFiles(req, res, mockNext);
 
     expect(db.query).toHaveBeenCalledTimes(2);
-    expect(redis.setex).toHaveBeenCalledTimes(1); // result cached
+    expect(redis.setex).toHaveBeenCalledTimes(1); 
     const body = res.json.mock.calls[0][0];
     expect(body.files).toHaveLength(1);
     expect(body.total).toBe(1);
@@ -98,7 +96,7 @@ describe('listFiles()', () => {
       .mockResolvedValueOnce({ rows: [] })
       .mockResolvedValueOnce({ rows: [{ count: '0' }] });
 
-    const req = makeReq({ query: {} }); // no query params
+    const req = makeReq({ query: {} }); 
     const res = mockRes();
     await listFiles(req, res, mockNext);
 
@@ -118,7 +116,7 @@ describe('listFiles()', () => {
     const res = mockRes();
     await listFiles(req, res, mockNext);
 
-    // 3rd arg to SELECT query is the LIMIT value
+   
     const limitArg = db.query.mock.calls[0][1][2];
     expect(limitArg).toBe(100);
   });
@@ -133,7 +131,7 @@ describe('listFiles()', () => {
     const res = mockRes();
     await listFiles(req, res, mockNext);
 
-    // OFFSET = (page - 1) * limit = (3-1) * 10 = 20
+   
     const offsetArg = db.query.mock.calls[0][1][3];
     expect(offsetArg).toBe(20);
   });
@@ -181,9 +179,7 @@ describe('listFiles()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// getFile
-// ═══════════════════════════════════════════════════════════════
+
 describe('getFile()', () => {
 
   test('returns cached file if Redis hit and userId matches', async () => {
@@ -202,12 +198,12 @@ describe('getFile()', () => {
     const file = makeFileRow({ user_id: 'other-user' });
     redis.get.mockResolvedValueOnce(JSON.stringify(file));
 
-    const req = makeReq({ params: { id: 'file-001' } }); // req.user.userId = 'user-123'
+    const req = makeReq({ params: { id: 'file-001' } }); 
     const res = mockRes();
     await getFile(req, res, mockNext);
 
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(db.query).not.toHaveBeenCalled(); // stops before hitting DB
+    expect(db.query).not.toHaveBeenCalled(); 
   });
 
   test('404 when file not in cache and not in DB', async () => {
@@ -257,13 +253,11 @@ describe('getFile()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// deleteFile
-// ═══════════════════════════════════════════════════════════════
+
 describe('deleteFile()', () => {
 
   test('404 — file not found or already deleted', async () => {
-    db.query.mockResolvedValueOnce({ rows: [] }); // UPDATE returned nothing
+    db.query.mockResolvedValueOnce({ rows: [] }); 
 
     const req = makeReq({ params: { id: 'file-gone' } });
     const res = mockRes();
@@ -275,8 +269,8 @@ describe('deleteFile()', () => {
 
   test('200 — soft deletes file, decrements storage, clears cache', async () => {
     db.query
-      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001', size: 2048 }] }) // UPDATE files
-      .mockResolvedValueOnce({ rows: [] }); // UPDATE users storage_used
+      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001', size: 2048 }] })
+      .mockResolvedValueOnce({ rows: [] });
     redis.del.mockResolvedValue(1);
 
     const req = makeReq({ params: { id: 'file-001' } });
@@ -296,8 +290,8 @@ describe('deleteFile()', () => {
     const res = mockRes();
     await deleteFile(req, res, mockNext);
 
-    const [, params] = db.query.mock.calls[1]; // second query = UPDATE users
-    expect(params[0]).toBe(5000); // decrements by file size
+    const [, params] = db.query.mock.calls[1]; 
+    expect(params[0]).toBe(5000); 
     expect(params[1]).toBe('user-123');
   });
 
@@ -324,13 +318,10 @@ describe('deleteFile()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// listVersions
-// ═══════════════════════════════════════════════════════════════
 describe('listVersions()', () => {
 
   test('404 — file not found or not owned by user', async () => {
-    db.query.mockResolvedValueOnce({ rows: [] }); // ownership check
+    db.query.mockResolvedValueOnce({ rows: [] }); 
 
     const req = makeReq({ params: { id: 'bad-file' } });
     const res = mockRes();
@@ -342,7 +333,7 @@ describe('listVersions()', () => {
 
   test('200 — returns all versions ordered by version_num DESC', async () => {
     db.query
-      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001' }] }) // ownership check
+      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001' }] }) 
       .mockResolvedValueOnce({ rows: [
         { version_id: 'v3', version_num: 3, size: 3000, created_at: new Date().toISOString() },
         { version_id: 'v2', version_num: 2, size: 2000, created_at: new Date().toISOString() },
@@ -357,7 +348,7 @@ describe('listVersions()', () => {
     expect(body.fileId).toBe('file-001');
     expect(body.versions).toHaveLength(3);
     expect(body.total).toBe(3);
-    expect(body.versions[0].version_num).toBe(3); // newest first
+    expect(body.versions[0].version_num).toBe(3); 
   });
 
   test('200 — returns empty versions array for new file', async () => {
@@ -383,9 +374,6 @@ describe('listVersions()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// restoreVersion
-// ═══════════════════════════════════════════════════════════════
 describe('restoreVersion()', () => {
 
   const makeClient = (queryResults = []) => {
@@ -407,8 +395,8 @@ describe('restoreVersion()', () => {
 
   test('404 — version not found for this file', async () => {
     db.query
-      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001', size: 1000 }] }) // file found
-      .mockResolvedValueOnce({ rows: [] }); // version not found
+      .mockResolvedValueOnce({ rows: [{ file_id: 'file-001', size: 1000 }] }) 
+      .mockResolvedValueOnce({ rows: [] }); 
 
     const req = makeReq({ params: { id: 'file-001', versionId: 'bad-version' } });
     const res = mockRes();
@@ -427,10 +415,10 @@ describe('restoreVersion()', () => {
       .mockResolvedValueOnce({ rows: [{ max_version: 3 }] });                     // MAX(version_num)
 
     const mockClient = makeClient([
-      undefined,   // BEGIN
-      undefined,   // INSERT new version
-      undefined,   // UPDATE files size
-      undefined,   // COMMIT
+      undefined,  
+      undefined,   
+      undefined,   
+      undefined,  
     ]);
     db.getClient.mockResolvedValueOnce(mockClient);
     redis.del.mockResolvedValue(1);
@@ -444,7 +432,7 @@ describe('restoreVersion()', () => {
     expect(body.message).toBe('Version restored successfully');
     expect(body.fileId).toBe('file-001');
     expect(body.restoredFrom).toBe('v1');
-    expect(body.newVersionNum).toBe(4); // max was 3, new is 4
+    expect(body.newVersionNum).toBe(4); 
   });
 
   test('new version num = max_version + 1', async () => {
@@ -452,7 +440,7 @@ describe('restoreVersion()', () => {
     db.query
       .mockResolvedValueOnce({ rows: [{ file_id: 'file-001', size: 500 }] })
       .mockResolvedValueOnce({ rows: [version] })
-      .mockResolvedValueOnce({ rows: [{ max_version: 7 }] }); // currently at v7
+      .mockResolvedValueOnce({ rows: [{ max_version: 7 }] }); 
 
     const mockClient = makeClient([undefined, undefined, undefined, undefined]);
     db.getClient.mockResolvedValueOnce(mockClient);
@@ -506,9 +494,7 @@ describe('restoreVersion()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// searchFiles
-// ═══════════════════════════════════════════════════════════════
+
 describe('searchFiles()', () => {
 
   test('400 — missing query param', async () => {
@@ -521,7 +507,7 @@ describe('searchFiles()', () => {
   });
 
   test('400 — empty string query', async () => {
-    const req = makeReq({ query: { q: '   ' } }); // whitespace only
+    const req = makeReq({ query: { q: '   ' } }); 
     const res = mockRes();
     await searchFiles(req, res, mockNext);
 
@@ -564,7 +550,7 @@ describe('searchFiles()', () => {
     await searchFiles(req, res, mockNext);
 
     const [, params] = db.query.mock.calls[0];
-    expect(params[1]).toBe('%Report%'); // wrapped in wildcards
+    expect(params[1]).toBe('%Report%'); 
   });
 
   test('trims whitespace from query before searching', async () => {
@@ -575,7 +561,7 @@ describe('searchFiles()', () => {
     await searchFiles(req, res, mockNext);
 
     const [, params] = db.query.mock.calls[0];
-    expect(params[1]).toBe('%budget%'); // trimmed
+    expect(params[1]).toBe('%budget%'); 
   });
 
   test('only searches files belonging to the requesting user', async () => {
