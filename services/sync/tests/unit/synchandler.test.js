@@ -116,9 +116,7 @@ describe('Socket.io auth middleware (setupSocket)', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Connection lifecycle
-// ═══════════════════════════════════════════════════════════════
+
 describe('Connection lifecycle', () => {
 
   const setupAndConnect = (userId = 'user-123', socketId = 'sock-001') => {
@@ -190,10 +188,6 @@ describe('Connection lifecycle', () => {
     expect(getConnectedDevices('user-cleanup')).toBe(1);
   });
 });
-
-// ═══════════════════════════════════════════════════════════════
-// notifyUser
-// ═══════════════════════════════════════════════════════════════
 describe('notifyUser()', () => {
 
   test('emits event to the correct user room', () => {
@@ -233,9 +227,6 @@ describe('notifyUser()', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// getTotalConnections
-// ═══════════════════════════════════════════════════════════════
 describe('getTotalConnections()', () => {
 
   test('returns a number', () => {

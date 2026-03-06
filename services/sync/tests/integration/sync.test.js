@@ -1,13 +1,8 @@
 'use strict';
 
-/**
- * Integration tests — sync-service
- * Socket.io is attached to http.Server, not express app.
- * We must use the exported `server` (http.Server) for socket clients
- * and supertest, NOT `app` directly.
- */
 
-jest.mock('./shared/rabbitmq', () => ({
+
+jest.mock('./shared/rabbitmq', () => ({ 
   connect:  jest.fn().mockResolvedValue(undefined),
   consume:  jest.fn().mockResolvedValue(undefined),
   publish:  jest.fn(),
@@ -29,9 +24,9 @@ const request  = require('supertest');
 const jwt      = require('jsonwebtoken');
 const { io: ioClient } = require('socket.io-client');
 
-// index.js exports { app, io } — app is Express, io is Socket.io Server
-// The http.Server wrapping app is what socket.io is bound to.
-// We must start our OWN http server from app for tests so we control the port.
+
+
+
 const http       = require('http');
 const { app, io } = require('../../index');
 const { notifyUser } = require('../../socket/syncHandler');
@@ -40,8 +35,7 @@ const SECRET    = 'sync-test-secret';
 const makeToken = (userId = 'user-123', email = 'test@test.com') =>
   jwt.sign({ userId, email }, SECRET, { expiresIn: '15m' });
 
-// We create a NEW http server and attach the same io instance to it
-// so socket clients and HTTP requests use the same port
+
 let testServer;
 let serverPort;
 
@@ -62,12 +56,12 @@ afterAll((done) => {
 
 beforeEach(() => jest.clearAllMocks());
 
-// ── Helper: connect socket client and wait for event ──────────
+
 const connectClient = (token, waitEvent = 'connected') =>
   new Promise((resolve, reject) => {
     const client = ioClient(`http://localhost:${serverPort}`, {
       auth: { token },
-      transports: ['websocket'], // skip polling — faster and avoids xhr poll errors
+      transports: ['websocket'],
       reconnection: false,
     });
     const timer = setTimeout(() => {
@@ -84,9 +78,7 @@ const connectClient = (token, waitEvent = 'connected') =>
     });
   });
 
-// ═══════════════════════════════════════════════════════════════
-// HTTP — Health
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /health', () => {
 
   test('200 — returns ok', async () => {
@@ -98,9 +90,7 @@ describe('GET /health', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// HTTP — 404
-// ═══════════════════════════════════════════════════════════════
+
 describe('Unknown HTTP routes', () => {
 
   test('404 — unknown path', async () => {
@@ -110,9 +100,7 @@ describe('Unknown HTTP routes', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Socket.io — Auth
-// ═══════════════════════════════════════════════════════════════
+
 describe('Socket.io auth', () => {
 
   test('rejects connection with no token', (done) => {
@@ -150,9 +138,7 @@ describe('Socket.io auth', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Socket.io — Connection events
-// ═══════════════════════════════════════════════════════════════
+
 describe('Socket.io connection events', () => {
 
   test('client receives connected event with socketId', async () => {
@@ -177,9 +163,7 @@ describe('Socket.io connection events', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Socket.io — Server-side event emission
-// ═══════════════════════════════════════════════════════════════
+
 describe('Server pushes events to clients via notifyUser', () => {
 
   test('client receives file:uploaded event', (done) => {
@@ -242,7 +226,7 @@ describe('Server pushes events to clients via notifyUser', () => {
       c2.client.once('file:uploaded', () => { wrongUserReceived = true; });
 
       c1.client.once('file:uploaded', (data) => {
-        // Small delay to ensure user2 didn't receive it
+      
         setTimeout(() => {
           expect(data.fileName).toBe('private.txt');
           expect(wrongUserReceived).toBe(false);
