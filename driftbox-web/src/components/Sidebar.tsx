@@ -50,7 +50,7 @@ export default function Sidebar() {
   return (
     <aside style={{ width: 220, flexShrink: 0, height: '100vh', background: t.bgSecondary, borderRight: '1px solid ' + t.border, display: 'flex', flexDirection: 'column', fontFamily: "'Sora', sans-serif", transition: 'background 0.2s' }}>
 
-      {/* Logo */}
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '22px 16px 12px' }}>
         <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2383e2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Cloud size={15} color="white" />
@@ -58,7 +58,7 @@ export default function Sidebar() {
         <span style={{ fontWeight: 700, fontSize: 16, color: t.text, letterSpacing: '-0.3px' }}>DriftBox</span>
       </div>
 
-      {/* Nav */}
+
       <nav style={{ flex: 1, padding: '4px 8px', display: 'flex', flexDirection: 'column', gap: 2 }}>
         {navItems.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/');
@@ -89,7 +89,6 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* Actions */}
       <div style={{ borderTop: '1px solid ' + t.border, padding: 8 }}>
         <button onClick={toggleTheme} style={plainBtn}>
           {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}

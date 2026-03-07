@@ -53,7 +53,7 @@ export default function SignupPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', fontFamily: "'Sora', sans-serif" }}>
 
-      {/* ── Left panel ── */}
+   
       <div style={{ width: 460, flexShrink: 0, background: '#f7f6f3', borderRight: '1px solid #e8e8e6', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '48px 40px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: '#2383e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -82,7 +82,7 @@ export default function SignupPage() {
         <p style={{ fontSize: 12, color: '#9b9b9b', display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>© 2024 DriftBox · Built with <Heart size={11} color="#e03131" style={{ flexShrink: 0 }} /> by BitGladiator</p>
       </div>
 
-      {/* ── Right panel ── */}
+     
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, background: '#ffffff' }}>
         <div style={{ width: '100%', maxWidth: 360, animation: 'fadeIn 0.3s ease' }}>
 

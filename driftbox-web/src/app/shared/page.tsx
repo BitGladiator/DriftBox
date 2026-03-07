@@ -62,7 +62,7 @@ export default function SharedPage() {
           {links.map((link: any) => (
             <div key={link.link_id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
 
-              {/* Icon */}
+             
               <div style={{ width: 36, height: 36, borderRadius: 10, background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Link2 size={16} color="#6d28d9" />
               </div>
@@ -87,7 +87,7 @@ export default function SharedPage() {
                 </div>
               </div>
 
-              {/* Actions */}
+            
               <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                 <button onClick={() => copyLink(link.url)}
                   style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid ' + t.border, background: 'transparent', color: t.textSecondary, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontFamily: "'Sora', sans-serif" }}>

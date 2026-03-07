@@ -50,10 +50,10 @@ export default function LoginPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', fontFamily: "'Sora', sans-serif" }}>
 
-      {/* ── Left panel ── */}
+     
       <div style={{ width: 460, flexShrink: 0, background: '#f7f6f3', borderRight: '1px solid #e8e8e6', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '48px 40px' }}>
 
-        {/* Logo */}
+
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: '#2383e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Cloud size={18} color="white" />
@@ -61,7 +61,7 @@ export default function LoginPage() {
           <span style={{ fontWeight: 700, fontSize: 18, color: '#1a1a1a', letterSpacing: '-0.3px' }}>DriftBox</span>
         </div>
 
-        {/* Features */}
+      
         <div>
           <p style={{ fontSize: 12, fontWeight: 600, color: '#9b9b9b', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
             What you get
@@ -84,7 +84,7 @@ export default function LoginPage() {
         <p style={{ fontSize: 12, color: '#9b9b9b', display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>© 2024 DriftBox · Built with <Heart size={11} color="#e03131" style={{ flexShrink: 0 }} /> by BitGladiator</p>
       </div>
 
-      {/* ── Right panel ── */}
+      
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, background: '#ffffff' }}>
         <div style={{ width: '100%', maxWidth: 360, animation: 'fadeIn 0.3s ease' }}>
 
@@ -108,7 +108,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
+
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#1a1a1a', marginBottom: 6 }}>Password</label>
               <div style={{ position: 'relative' }}>
@@ -125,14 +125,14 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Error */}
+         
             {error && (
               <div style={{ padding: '10px 14px', borderRadius: 10, background: '#fee2e2', color: '#b91c1c', fontSize: 13, fontWeight: 500 }}>
                 {error}
               </div>
             )}
 
-            {/* Submit */}
+          
             <button type="submit" disabled={loading}
               style={{ width: '100%', padding: '11px 20px', borderRadius: 10, fontSize: 14, fontWeight: 600, background: loading ? '#93c5fd' : '#2383e2', color: 'white', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4, transition: 'background 0.15s' }}>
               {loading && <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />}
@@ -141,7 +141,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
+       
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '28px 0' }}>
             <div style={{ flex: 1, height: 1, background: '#e8e8e6' }} />
             <span style={{ fontSize: 12, color: '#9b9b9b' }}>or</span>

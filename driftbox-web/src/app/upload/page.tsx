@@ -67,7 +67,7 @@ export default function UploadPage() {
     <div style={{ padding: 32, background: t.bg, minHeight: '100vh', fontFamily: "'Sora', sans-serif" }}>
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
-        {/* Header */}
+       
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
           <button onClick={() => router.push('/dashboard')}
             style={{ width: 34, height: 34, borderRadius: 8, border: '1px solid ' + t.border, background: t.bgSecondary, color: t.textSecondary, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -79,7 +79,7 @@ export default function UploadPage() {
           </div>
         </div>
 
-        {/* Drop zone */}
+       
         <div
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
@@ -95,17 +95,17 @@ export default function UploadPage() {
             onChange={(e) => e.target.files && addFiles(e.target.files)} />
         </div>
 
-        {/* File list */}
+        
         {files.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
             {files.map((f) => (
               <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
-                {/* Icon */}
+               
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bgHover, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {(() => { const { Icon: FIcon, color: fColor } = getFileIconComponent(f.file.type); return <FIcon size={18} color={fColor} />; })()}
                 </div>
 
-                {/* Info */}
+               
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                     <p style={{ fontSize: 13, fontWeight: 600, color: t.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.file.name}</p>
@@ -125,7 +125,7 @@ export default function UploadPage() {
                   {f.status === 'pending'  && <p style={{ fontSize: 11, color: t.textMuted }}>Ready to upload</p>}
                 </div>
 
-                {/* Status icon */}
+               
                 <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                   {f.status === 'done'     && <CheckCircle size={16} color="#0f7b6c" />}
                   {f.status === 'error'    && <AlertCircle size={16} color="#b91c1c" />}
@@ -141,7 +141,7 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* Action buttons */}
+       
         {files.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {pending > 0 && (

@@ -70,7 +70,7 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: 32, background: t.bg, minHeight: '100vh', fontFamily: "'Sora', sans-serif" }}>
 
-      {/* Header */}
+     
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: '-0.4px', marginBottom: 2 }}>My Files</h1>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Toolbar */}
+     
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, maxWidth: 320, padding: '8px 12px', borderRadius: 10, border: '1.5px solid ' + t.border, background: t.bgSecondary }}>
           <Search size={13} color={t.textMuted} />
@@ -105,7 +105,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Loading skeletons */}
+     
       {isLoading && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
           {Array.from({ length: 12 }).map((_, i) => (
@@ -114,7 +114,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Empty state */}
+     
       {!isLoading && !files?.length && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', textAlign: 'center' }}>
           <div style={{ width: 72, height: 72, borderRadius: 20, background: 'rgba(35,131,226,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Grid view */}
+     
       {!isLoading && !!files?.length && view === 'grid' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
           {files.map((file: any) => {
@@ -157,7 +157,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* List view */}
+     
       {!isLoading && !!files?.length && view === 'list' && (
         <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid ' + t.border }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
