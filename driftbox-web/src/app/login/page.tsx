@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useStore } from '@/store/useStore';
-import { Cloud, Eye, EyeOff, ArrowRight, Loader2, Zap, RefreshCw, Link2, FolderOpen } from 'lucide-react';
+import { Cloud, Eye, EyeOff, ArrowRight, Loader2, Zap, RefreshCw, Link2, FolderOpen, Heart } from 'lucide-react';
 
 const FEATURES = [
   { icon: Zap,        label: 'Chunked uploads',  desc: 'Large files upload reliably with auto-resume',  iconColor: '#dfab01', iconBg: '#fef9c3' },
@@ -81,7 +81,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p style={{ fontSize: 12, color: '#9b9b9b' }}>© 2024 DriftBox · Built with ❤️ by BitGladiator</p>
+        <p style={{ fontSize: 12, color: '#9b9b9b', display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>© 2024 DriftBox · Built with <Heart size={11} color="#e03131" style={{ flexShrink: 0 }} /> by BitGladiator</p>
       </div>
 
       {/* ── Right panel ── */}

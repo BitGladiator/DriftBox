@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { metadataApi, shareApi, uploadApi } from '@/lib/api';
 import { useStore } from '@/store/useStore';
 import { getTheme } from '@/lib/theme';
-import { formatBytes, formatDate, getFileIcon, getFileColors } from '@/lib/utils';
-import { Search, Upload, Trash2, Share2, Grid3X3, List, RefreshCw, Download, X, Link2 } from 'lucide-react';
+import { formatBytes, formatDate, getFileIconComponent, getFileColors } from '@/lib/utils';
+import { Search, Upload, Trash2, Share2, Grid3X3, List, RefreshCw, Download, X, Link2, FolderOpen } from 'lucide-react';
 
 export default function DashboardPage() {
   const router       = useRouter();
@@ -117,7 +117,9 @@ export default function DashboardPage() {
       {/* Empty state */}
       {!isLoading && !files?.length && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', textAlign: 'center' }}>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>📂</div>
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: 'rgba(35,131,226,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+            <FolderOpen size={36} color="#2383e2" />
+          </div>
           <p style={{ fontSize: 16, fontWeight: 600, color: t.text, marginBottom: 6 }}>No files yet</p>
           <p style={{ fontSize: 13, color: t.textSecondary, marginBottom: 24 }}>Upload your first file to get started</p>
           <button onClick={() => router.push('/upload')}
@@ -132,11 +134,12 @@ export default function DashboardPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
           {files.map((file: any) => {
             const { bg: iBg, color: iColor } = getFileColors(file.mime_type);
+            const { Icon: FileIcon, color: fileIconColor } = getFileIconComponent(file.mime_type);
             const isSel = selected === file.file_id;
             return (
               <div key={file.file_id} onClick={() => setSelected(isSel ? null : file.file_id)} style={card(isSel)}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: iBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12, fontSize: 20 }}>
-                  {getFileIcon(file.mime_type)}
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: iBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  <FileIcon size={20} color={fileIconColor} />
                 </div>
                 <p style={{ fontSize: 12, fontWeight: 600, color: t.text, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</p>
                 <p style={{ fontSize: 11, color: t.textMuted }}>{formatBytes(file.size)}</p>
@@ -168,14 +171,15 @@ export default function DashboardPage() {
             <tbody>
               {files.map((file: any) => {
                 const { bg: iBg } = getFileColors(file.mime_type);
+                const { Icon: ListFileIcon, color: listIconColor } = getFileIconComponent(file.mime_type);
                 return (
                   <tr key={file.file_id} style={{ borderBottom: '1px solid ' + t.border }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = t.bgHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                     <td style={{ padding: '10px 16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 28, height: 28, borderRadius: 6, background: iBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>
-                          {getFileIcon(file.mime_type)}
+                        <div style={{ width: 28, height: 28, borderRadius: 6, background: iBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <ListFileIcon size={14} color={listIconColor} />
                         </div>
                         <span style={{ fontWeight: 500, color: t.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 220 }}>{file.name}</span>
                       </div>

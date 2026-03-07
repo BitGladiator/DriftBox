@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { uploadApi } from '@/lib/api';
 import { useStore } from '@/store/useStore';
 import { getTheme } from '@/lib/theme';
-import { splitIntoChunks, formatBytes, getFileIcon } from '@/lib/utils';
+import { splitIntoChunks, formatBytes, getFileIconComponent } from '@/lib/utils';
 import { ArrowLeft, CloudUpload, Upload, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface UploadFile {
@@ -101,8 +101,8 @@ export default function UploadPage() {
             {files.map((f) => (
               <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
                 {/* Icon */}
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bgHover, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
-                  {getFileIcon(f.file.type)}
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bgHover, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {(() => { const { Icon: FIcon, color: fColor } = getFileIconComponent(f.file.type); return <FIcon size={18} color={fColor} />; })()}
                 </div>
 
                 {/* Info */}
@@ -120,7 +120,7 @@ export default function UploadPage() {
                       <p style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>{f.progress}% uploaded</p>
                     </div>
                   )}
-                  {f.status === 'done'     && <p style={{ fontSize: 11, color: '#0f7b6c' }}>✓ Uploaded successfully</p>}
+                  {f.status === 'done'     && <p style={{ fontSize: 11, color: '#0f7b6c', display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={11} color="#0f7b6c" /> Uploaded successfully</p>}
                   {f.status === 'error'    && <p style={{ fontSize: 11, color: '#b91c1c' }}>{f.error}</p>}
                   {f.status === 'pending'  && <p style={{ fontSize: 11, color: t.textMuted }}>Ready to upload</p>}
                 </div>

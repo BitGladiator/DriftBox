@@ -49,7 +49,9 @@ export default function SharedPage() {
 
       {!isLoading && links.length === 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', textAlign: 'center' }}>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>🔗</div>
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+            <Link2 size={36} color="#6d28d9" />
+          </div>
           <p style={{ fontSize: 16, fontWeight: 600, color: t.text, marginBottom: 6 }}>No shared links yet</p>
           <p style={{ fontSize: 13, color: t.textSecondary }}>Go to Files and share a file to see links here</p>
         </div>
