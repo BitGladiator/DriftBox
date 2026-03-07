@@ -1,11 +1,5 @@
 'use strict';
 
-/**
- * Integration tests — upload-service
- * Fires real HTTP requests via supertest.
- * All external deps (DB, Redis, Storage, RabbitMQ) are mocked.
- * JWT_SECRET set in tests/setup.js via jest setupFiles.
- */
 
 jest.mock('./shared/db', () => ({
   query:     jest.fn(),
@@ -68,9 +62,7 @@ beforeAll((done) => { server = app.listen(0, done); });
 afterAll((done)  => { server.close(done); });
 beforeEach(() => jest.clearAllMocks());
 
-// ═══════════════════════════════════════════════════════════════
-// HEALTH
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /health', () => {
   test('200 — returns ok', async () => {
     const res = await request(app).get('/health');
@@ -80,9 +72,7 @@ describe('GET /health', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// Auth guard on all /upload routes
-// ═══════════════════════════════════════════════════════════════
+
 describe('Auth guard', () => {
   test('401 — no token on POST /upload/init', async () => {
     const res = await request(app).post('/upload/init').send({});
@@ -312,9 +302,7 @@ describe('GET /upload/status/:sessionId', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-// GET /upload/download/:fileId
-// ═══════════════════════════════════════════════════════════════
+
 describe('GET /upload/download/:fileId', () => {
   const token = makeToken();
 

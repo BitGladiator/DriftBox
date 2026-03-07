@@ -16,7 +16,6 @@ const io     = new Server(server, {
 });
 const PORT = process.env.PORT || 3004;
 
-// ─── Metrics ──────────────────────────────────────────────────
 client.collectDefaultMetrics({ prefix: 'sync_' });
 
 const connectionsGauge = new client.Gauge({
@@ -28,12 +27,12 @@ setInterval(() => {
   connectionsGauge.set(getTotalConnections());
 }, 10000);
 
-// ─── Middleware ───────────────────────────────────────────────
+
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// ─── Health ───────────────────────────────────────────────────
+
 app.get('/health', (req, res) => {
   res.json({
     status:      'ok',
@@ -43,28 +42,28 @@ app.get('/health', (req, res) => {
   });
 });
 
-// ─── Metrics endpoint ─────────────────────────────────────────
+
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
   res.end(await client.register.metrics());
 });
 
-// ─── 404 ──────────────────────────────────────────────────────
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// ─── Error handler ────────────────────────────────────────────
+
 app.use((err, req, res, next) => {
   console.error(`[${new Date().toISOString()}] ERROR:`, err.message);
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
 
-// ─── Init then start ──────────────────────────────────────────
+
 const start = async () => {
   console.log('[sync] Connecting to RabbitMQ...');
 
-  // Retry up to 10 times with 5s delay — gives RabbitMQ time to be ready
+
   await mq.connect(10, 5000);
 
   console.log('[sync] Setting up Socket.io...');
