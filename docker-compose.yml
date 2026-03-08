@@ -2,7 +2,6 @@ version: '3.9'
 
 services:
 
-  # ─── Infrastructure ───────────────────────────────────────────
 
   postgres:
     image: postgres:16-alpine
@@ -163,7 +162,7 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  # ─── Monitoring ───────────────────────────────────────────────
+  
 
   prometheus:
     image: prom/prometheus:latest
