@@ -10,6 +10,7 @@ jest.mock('./shared/db/redis', () => ({
   setex: jest.fn(),
   get:   jest.fn(),
   del:   jest.fn(),
+  keys:  jest.fn().mockResolvedValue([]),
 }));
 jest.mock('./shared/storage', () => ({
   init:         jest.fn().mockResolvedValue(undefined),

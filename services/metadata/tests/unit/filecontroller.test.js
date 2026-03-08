@@ -9,6 +9,7 @@ jest.mock('../shared/db/redis', () => ({
   get:   jest.fn(),
   setex: jest.fn(),
   del:   jest.fn(),
+  keys:  jest.fn().mockResolvedValue([]),
 }));
 
 const db    = require('../shared/db');
