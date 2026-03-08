@@ -10,44 +10,76 @@ import { formatBytes, formatDate, getFileIconComponent, getFileColors } from '@/
 import { Search, Upload, Trash2, Share2, Grid3X3, List, RefreshCw, Download, X, Link2, FolderOpen } from 'lucide-react';
 
 export default function DashboardPage() {
-  const router       = useRouter();
-  const qc           = useQueryClient();
+  const router = useRouter();
+  const qc = useQueryClient();
   const { addNotification, theme } = useStore();
-  const t            = getTheme(theme === 'dark');
-  const [search, setSearch]       = useState('');
-  const [view, setView]           = useState<'grid' | 'list'>('grid');
-  const [selected, setSelected]   = useState<string | null>(null);
+  const t = getTheme(theme === 'dark');
+  const [search, setSearch] = useState('');
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [selected, setSelected] = useState<string | null>(null);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['files'],
     queryFn: () => metadataApi.listFiles('/'),
-    select: (r) => r.data,
+    staleTime: 5000,
   });
 
   const { data: searchData } = useQuery({
     queryKey: ['search', search],
     queryFn: () => metadataApi.searchFiles(search),
     enabled: search.length > 1,
-    select: (r) => r.data,
+    staleTime: 5000,
   });
+  const rawFiles: any[] = data?.data?.files ?? [];
+  const totalFiles: number = data?.data?.total ?? 0;
+  const files = search.length > 1 ? (searchData?.data?.results ?? []) : rawFiles;
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => metadataApi.deleteFile(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['files'] }); addNotification({ type: 'sync', message: 'File deleted' }); setSelected(null); },
+    onMutate: async (deletedId: string) => {
+      await qc.cancelQueries({ queryKey: ['files'] });
+      const previous = qc.getQueryData(['files']);
+      qc.setQueryData(['files'], (old: any) => {
+        if (!old?.data?.files) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            files: old.data.files.filter((f: any) => f.file_id !== deletedId),
+            total: Math.max(0, (old.data.total ?? 1) - 1),
+          },
+        };
+      });
+      setSelected(null);
+      return { previous };
+    },
+    onError: (_err: any, _id, ctx: any) => {
+      if (ctx?.previous) qc.setQueryData(['files'], ctx.previous);
+      addNotification({ type: 'error', message: 'Failed to delete file' });
+    },
+    onSuccess: () => {
+      addNotification({ type: 'sync', message: 'File deleted' });
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['files'] });
+    },
   });
 
   const shareMutation = useMutation({
     mutationFn: (id: string) => shareApi.createLink(id, 'read', 7),
-    onSuccess: (res) => { navigator.clipboard.writeText(res.data.link.url); addNotification({ type: 'share', message: 'Share link copied!' }); },
+    onSuccess: (res) => {
+      navigator.clipboard.writeText(res.data.link.url);
+      addNotification({ type: 'share', message: 'Share link copied!' });
+    },
   });
 
   const downloadMutation = useMutation({
-    mutationFn: async (id: string) => { const r = await uploadApi.download(id); window.open(r.data.url, '_blank'); },
+    mutationFn: async (id: string) => {
+      const r = await uploadApi.download(id);
+      window.open(r.data.url, '_blank');
+    },
   });
 
-  const files = search.length > 1 ? searchData?.results : data?.files;
-
-  // ── Shared styles ──────────────────────────────────────────
   const card = (isSelected: boolean): React.CSSProperties => ({
     padding: 16, borderRadius: 12, cursor: 'pointer', position: 'relative',
     background: isSelected ? t.bgHover : t.bgSecondary,
@@ -70,11 +102,10 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: 32, background: t.bg, minHeight: '100vh', fontFamily: "'Sora', sans-serif" }}>
 
-     
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: '-0.4px', marginBottom: 2 }}>My Files</h1>
-          <p style={{ fontSize: 13, color: t.textSecondary }}>{data?.total ?? 0} files</p>
+          <p style={{ fontSize: 13, color: t.textSecondary }}>{totalFiles} files</p>
         </div>
         <button onClick={() => router.push('/upload')}
           style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 16px', borderRadius: 10, border: 'none', background: '#2383e2', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }}>
@@ -82,7 +113,6 @@ export default function DashboardPage() {
         </button>
       </div>
 
-     
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, maxWidth: 320, padding: '8px 12px', borderRadius: 10, border: '1.5px solid ' + t.border, background: t.bgSecondary }}>
           <Search size={13} color={t.textMuted} />
@@ -105,7 +135,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-     
       {isLoading && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
           {Array.from({ length: 12 }).map((_, i) => (
@@ -114,7 +143,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-     
       {!isLoading && !files?.length && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0', textAlign: 'center' }}>
           <div style={{ width: 72, height: 72, borderRadius: 20, background: 'rgba(35,131,226,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
@@ -129,11 +157,10 @@ export default function DashboardPage() {
         </div>
       )}
 
-     
       {!isLoading && !!files?.length && view === 'grid' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
           {files.map((file: any) => {
-            const { bg: iBg, color: iColor } = getFileColors(file.mime_type);
+            const { bg: iBg } = getFileColors(file.mime_type);
             const { Icon: FileIcon, color: fileIconColor } = getFileIconComponent(file.mime_type);
             const isSel = selected === file.file_id;
             return (
@@ -157,7 +184,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-     
       {!isLoading && !!files?.length && view === 'list' && (
         <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid ' + t.border }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>

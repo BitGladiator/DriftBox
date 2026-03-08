@@ -1,4 +1,4 @@
-const db    = require('../shared/db');
+const db = require('../shared/db');
 const redis = require('../shared/db/redis');
 
 const CACHE_TTL = 60;
@@ -8,11 +8,11 @@ const listFiles = async (req, res, next) => {
     const { folderPath = '/', page = 1, limit = 20 } = req.query;
     const userId = req.user.userId;
 
-    const parsedLimit  = Math.min(parseInt(limit, 10) || 20, 100);
+    const parsedLimit = Math.min(parseInt(limit, 10) || 20, 100);
     const parsedOffset = (Math.max(parseInt(page, 10) || 1, 1) - 1) * parsedLimit;
 
     const cacheKey = `files:${userId}:${folderPath}:${page}:${limit}`;
-    const cached   = await redis.get(cacheKey);
+    const cached = await redis.get(cacheKey);
     if (cached) return res.json(JSON.parse(cached));
 
     const result = await db.query(
@@ -34,10 +34,10 @@ const listFiles = async (req, res, next) => {
     );
 
     const response = {
-      files:      result.rows,
-      total:      parseInt(countResult.rows[0].count, 10),
-      page:       parseInt(page, 10),
-      limit:      parsedLimit,
+      files: result.rows,
+      total: parseInt(countResult.rows[0].count, 10),
+      page: parseInt(page, 10),
+      limit: parsedLimit,
       folderPath,
     };
 
@@ -53,10 +53,10 @@ const listFiles = async (req, res, next) => {
 const getFile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userId  = req.user.userId;
+    const userId = req.user.userId;
 
     const cacheKey = `file:${id}`;
-    const cached   = await redis.get(cacheKey);
+    const cached = await redis.get(cacheKey);
     if (cached) {
       const file = JSON.parse(cached);
       if (file.user_id !== userId)
@@ -91,7 +91,7 @@ const getFile = async (req, res, next) => {
 const deleteFile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userId  = req.user.userId;
+    const userId = req.user.userId;
 
     const result = await db.query(
       `UPDATE files
@@ -110,7 +110,7 @@ const deleteFile = async (req, res, next) => {
       [result.rows[0].size, userId]
     );
 
-   
+
     await redis.del(`file:${id}`);
 
     res.json({ message: 'File deleted', fileId: id });
@@ -123,9 +123,9 @@ const deleteFile = async (req, res, next) => {
 const listVersions = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userId  = req.user.userId;
+    const userId = req.user.userId;
 
-    
+
     const fileResult = await db.query(
       'SELECT file_id FROM files WHERE file_id = $1 AND user_id = $2 AND is_deleted = FALSE',
       [id, userId]
@@ -142,9 +142,9 @@ const listVersions = async (req, res, next) => {
     );
 
     res.json({
-      fileId:   id,
+      fileId: id,
       versions: result.rows,
-      total:    result.rows.length,
+      total: result.rows.length,
     });
   } catch (err) {
     next(err);
@@ -157,7 +157,7 @@ const restoreVersion = async (req, res, next) => {
     const { id, versionId } = req.params;
     const userId = req.user.userId;
 
-   
+
     const fileResult = await db.query(
       'SELECT file_id, size FROM files WHERE file_id = $1 AND user_id = $2 AND is_deleted = FALSE',
       [id, userId]
@@ -165,7 +165,7 @@ const restoreVersion = async (req, res, next) => {
     if (fileResult.rows.length === 0)
       return res.status(404).json({ error: 'File not found' });
 
-  
+
     const versionResult = await db.query(
       'SELECT * FROM file_versions WHERE version_id = $1 AND file_id = $2',
       [versionId, id]
@@ -175,7 +175,7 @@ const restoreVersion = async (req, res, next) => {
 
     const versionToRestore = versionResult.rows[0];
 
-    
+
     const maxVersionResult = await db.query(
       'SELECT MAX(version_num) as max_version FROM file_versions WHERE file_id = $1',
       [id]
@@ -186,14 +186,14 @@ const restoreVersion = async (req, res, next) => {
     try {
       await dbClient.query('BEGIN');
 
-    
+
       await dbClient.query(
         `INSERT INTO file_versions (file_id, version_num, chunk_ids, size)
          VALUES ($1, $2, $3, $4)`,
         [id, newVersionNum, versionToRestore.chunk_ids, versionToRestore.size]
       );
 
-      
+
       await dbClient.query(
         `UPDATE files SET size = $1, updated_at = NOW() WHERE file_id = $2`,
         [versionToRestore.size, id]
@@ -211,9 +211,9 @@ const restoreVersion = async (req, res, next) => {
     await redis.del(`file:${id}`);
 
     res.json({
-      message:        'Version restored successfully',
-      fileId:         id,
-      restoredFrom:   versionId,
+      message: 'Version restored successfully',
+      fileId: id,
+      restoredFrom: versionId,
       newVersionNum,
     });
   } catch (err) {
@@ -242,9 +242,9 @@ const searchFiles = async (req, res, next) => {
     );
 
     res.json({
-      query:   q,
+      query: q,
       results: result.rows,
-      total:   result.rows.length,
+      total: result.rows.length,
     });
   } catch (err) {
     next(err);

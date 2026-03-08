@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { uploadApi } from '@/lib/api';
 import { useStore } from '@/store/useStore';
 import { getTheme } from '@/lib/theme';
@@ -18,6 +19,7 @@ interface UploadFile {
 
 export default function UploadPage() {
   const router = useRouter();
+  const qc = useQueryClient();
   const { addNotification, theme } = useStore();
   const t = getTheme(theme === 'dark');
   const [files, setFiles]       = useState<UploadFile[]>([]);
@@ -51,6 +53,7 @@ export default function UploadPage() {
       }
       await uploadApi.complete(init.sessionId);
       update({ status: 'done', progress: 100 });
+      qc.invalidateQueries({ queryKey: ['files'] });
       addNotification({ type: 'upload', message: f.file.name + ' uploaded successfully' });
     } catch (err: any) {
       update({ status: 'error', error: err.response?.data?.error || 'Upload failed' });
