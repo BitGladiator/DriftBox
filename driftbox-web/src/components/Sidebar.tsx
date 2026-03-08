@@ -23,7 +23,9 @@ export default function Sidebar() {
     router.push('/login');
   };
 
-  const pct = user ? Math.min(Math.round((user.storageUsed / user.storageQuota) * 100), 100) : 0;
+  const pct = user && user.storageQuota 
+    ? Math.min(user.storageUsed > 0 ? Math.max(1, Math.round((user.storageUsed / user.storageQuota) * 100)) : 0, 100) 
+    : 0;
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Files' },
