@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.github
+.env
+ driftbox-web/node_modules
+services/auth/node_modules
+services/metadata/node_modules
+services/share/node_modules
+services/sync/node_modules
+services/upload/node_modules
+**/.DS_Store
+.next

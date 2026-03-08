@@ -59,8 +59,8 @@ export default function SharedPage() {
 
       {!isLoading && links.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {links.map((link: any) => (
-            <div key={link.link_id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
+          {links.map((link: any, index: number) => (
+            <div key={link.link_id || link.id || index} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
 
              
               <div style={{ width: 36, height: 36, borderRadius: 10, background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

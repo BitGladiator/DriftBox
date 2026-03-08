@@ -111,6 +111,12 @@ const deleteFile = async (req, res, next) => {
     );
 
 
+    // Invalidate list files cache for this user
+    const keys = await redis.keys(`files:${userId}:*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+    
     await redis.del(`file:${id}`);
 
     res.json({ message: 'File deleted', fileId: id });
@@ -207,6 +213,12 @@ const restoreVersion = async (req, res, next) => {
       dbClient.release();
     }
 
+
+    // Invalidate list files cache for this user
+    const keys = await redis.keys(`files:${userId}:*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
 
     await redis.del(`file:${id}`);
 

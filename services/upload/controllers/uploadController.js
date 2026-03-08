@@ -203,6 +203,12 @@ const completeUpload = async (req, res, next) => {
     await redis.del(sessionKey(sessionId));
     await redis.del(progressKey(sessionId));
 
+    // Invalidate list files cache for this user
+    const keys = await redis.keys(`files:${session.userId}:*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+
    
     mq.publish(mq.QUEUES.FILE_UPLOADED, {
       fileId:   file.file_id,
