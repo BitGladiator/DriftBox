@@ -22,9 +22,9 @@ export default function UploadPage() {
   const qc = useQueryClient();
   const { addNotification, theme } = useStore();
   const t = getTheme(theme === 'dark');
-  const [files, setFiles]       = useState<UploadFile[]>([]);
+  const [files, setFiles] = useState<UploadFile[]>([]);
   const [dragOver, setDragOver] = useState(false);
-  const inputRef                = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const addFiles = (newFiles: FileList | File[]) => {
     const arr = Array.from(newFiles).map((file) => ({
@@ -61,10 +61,10 @@ export default function UploadPage() {
     }
   };
 
-  const uploadAll  = () => files.filter((f) => f.status === 'pending').forEach(uploadFile);
+  const uploadAll = () => files.filter((f) => f.status === 'pending').forEach(uploadFile);
   const removeFile = (id: string) => setFiles((prev) => prev.filter((f) => f.id !== id));
-  const pending    = files.filter((f) => f.status === 'pending').length;
-  const allDone    = files.length > 0 && files.every((f) => f.status === 'done' || f.status === 'error');
+  const pending = files.filter((f) => f.status === 'pending').length;
+  const allDone = files.length > 0 && files.every((f) => f.status === 'done' || f.status === 'error');
 
   return (
     <div style={{ padding: 32, background: t.bg, minHeight: '100vh', fontFamily: "'Sora', sans-serif" }}>
@@ -123,17 +123,17 @@ export default function UploadPage() {
                       <p style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>{f.progress}% uploaded</p>
                     </div>
                   )}
-                  {f.status === 'done'     && <p style={{ fontSize: 11, color: '#0f7b6c', display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={11} color="#0f7b6c" /> Uploaded successfully</p>}
-                  {f.status === 'error'    && <p style={{ fontSize: 11, color: '#b91c1c' }}>{f.error}</p>}
-                  {f.status === 'pending'  && <p style={{ fontSize: 11, color: t.textMuted }}>Ready to upload</p>}
+                  {f.status === 'done' && <p style={{ fontSize: 11, color: '#0f7b6c', display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={11} color="#0f7b6c" /> Uploaded successfully</p>}
+                  {f.status === 'error' && <p style={{ fontSize: 11, color: '#b91c1c' }}>{f.error}</p>}
+                  {f.status === 'pending' && <p style={{ fontSize: 11, color: t.textMuted }}>Ready to upload</p>}
                 </div>
 
                
                 <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                  {f.status === 'done'     && <CheckCircle size={16} color="#0f7b6c" />}
-                  {f.status === 'error'    && <AlertCircle size={16} color="#b91c1c" />}
+                  {f.status === 'done'  && <CheckCircle size={16} color="#0f7b6c" />}
+                  {f.status === 'error' && <AlertCircle size={16} color="#b91c1c" />}
                   {f.status === 'uploading'&& <Loader2 size={16} color="#2383e2" style={{ animation: 'spin 1s linear infinite' }} />}
-                  {f.status === 'pending'  && (
+                  {f.status === 'pending' && (
                     <button onClick={() => removeFile(f.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
                       <X size={14} />
                     </button>

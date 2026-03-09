@@ -33,7 +33,6 @@ export default function SharedPage() {
   return (
     <div style={{ padding: 32, background: t.bg, minHeight: '100vh', fontFamily: "'Sora', sans-serif" }}>
 
-      {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: '-0.4px', marginBottom: 2 }}>Shared Links</h1>
         <p style={{ fontSize: 13, color: t.textSecondary }}>{links.length} active link{links.length !== 1 ? 's' : ''}</p>
@@ -67,7 +66,7 @@ export default function SharedPage() {
                 <Link2 size={16} color="#6d28d9" />
               </div>
 
-              {/* Info */}
+      
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: t.text, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {link.file_name ?? 'Shared file'}

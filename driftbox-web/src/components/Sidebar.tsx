@@ -29,8 +29,8 @@ export default function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Files' },
-    { href: '/upload',    icon: Upload,          label: 'Upload' },
-    { href: '/shared',    icon: Share2,          label: 'Shared' },
+    { href: '/upload', icon: Upload,label: 'Upload' },
+    { href: '/shared', icon: Share2,label: 'Shared' },
   ];
 
   const navBtn = (active: boolean): React.CSSProperties => ({
@@ -72,7 +72,6 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Storage */}
       {user && (
         <div style={{ margin: '0 8px 8px', padding: 12, borderRadius: 10, background: t.bgHover }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -100,8 +99,6 @@ export default function Sidebar() {
           <LogOut size={15} /> Sign out
         </button>
       </div>
-
-      {/* User avatar */}
       {user && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderTop: '1px solid ' + t.border }}>
           <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#9065b0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'white', flexShrink: 0 }}>

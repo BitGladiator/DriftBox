@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const AUTH_URL     = process.env.NEXT_PUBLIC_AUTH_URL     || 'http://localhost:3001';
-const UPLOAD_URL   = process.env.NEXT_PUBLIC_UPLOAD_URL   || 'http://localhost:3002';
+const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:3001';
+const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL || 'http://localhost:3002';
 const METADATA_URL = process.env.NEXT_PUBLIC_METADATA_URL || 'http://localhost:3003';
-const SHARE_URL    = process.env.NEXT_PUBLIC_SHARE_URL    || 'http://localhost:3005';
+const SHARE_URL = process.env.NEXT_PUBLIC_SHARE_URL || 'http://localhost:3005';
 
 const makeClient = (baseURL: string) => {
   const client = axios.create({ baseURL });
@@ -37,17 +37,17 @@ const makeClient = (baseURL: string) => {
   return client;
 };
 
-const authClient     = makeClient(AUTH_URL);
-const uploadClient   = makeClient(UPLOAD_URL);
+const authClient = makeClient(AUTH_URL);
+const uploadClient = makeClient(UPLOAD_URL);
 const metadataClient = makeClient(METADATA_URL);
-const shareClient    = makeClient(SHARE_URL);
+const shareClient = makeClient(SHARE_URL);
 
 export const authApi = {
   signup:  (email: string, password: string) => authClient.post('/auth/signup', { email, password }),
   login:   (email: string, password: string) => authClient.post('/auth/login',  { email, password }),
-  logout:  (refreshToken: string)             => authClient.post('/auth/logout', { refreshToken }),
-  me:      ()                                 => authClient.get('/auth/me'),
-  refresh: (refreshToken: string)             => authClient.post('/auth/refresh', { refreshToken }),
+  logout:  (refreshToken: string)            => authClient.post('/auth/logout', { refreshToken }),
+  me:      ()                                => authClient.get('/auth/me'),
+  refresh: (refreshToken: string)            => authClient.post('/auth/refresh', { refreshToken }),
 };
 
 export const uploadApi = {

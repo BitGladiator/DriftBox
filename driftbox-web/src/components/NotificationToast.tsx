@@ -5,10 +5,10 @@ import { useStore } from '@/store/useStore';
 import { Upload, RefreshCw, Share2, AlertCircle, X } from 'lucide-react';
 
 const CONFIG = {
-  upload: { icon: Upload,       bg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
-  sync:   { icon: RefreshCw,    bg: '#dbeafe', color: '#1d4ed8', border: '#bfdbfe' },
-  share:  { icon: Share2,       bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' },
-  error:  { icon: AlertCircle,  bg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
+  upload: { icon: Upload, bg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
+  sync:   { icon: RefreshCw, bg: '#dbeafe', color: '#1d4ed8', border: '#bfdbfe' },
+  share:  { icon: Share2, bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' },
+  error:  { icon: AlertCircle, bg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
 };
 
 export default function NotificationToast() {
