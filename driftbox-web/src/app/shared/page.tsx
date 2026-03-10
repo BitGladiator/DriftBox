@@ -59,7 +59,7 @@ export default function SharedPage() {
       {!isLoading && links.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {links.map((link: any, index: number) => (
-            <div key={link.link_id || link.id || index} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
+            <div key={link.linkId || link.id || index} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderRadius: 12, background: t.bgSecondary, border: '1px solid ' + t.border }}>
 
              
               <div style={{ width: 36, height: 36, borderRadius: 10, background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -69,15 +69,15 @@ export default function SharedPage() {
       
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: t.text, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {link.file_name ?? 'Shared file'}
+                  {link.fileName ?? 'Shared file'}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 11, color: t.textMuted, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Clock size={10} /> Created {formatDate(link.created_at)}
+                    <Clock size={10} /> Created {formatDate(link.createdAt)}
                   </span>
-                  {link.expires_at && (
+                  {link.expiresAt && (
                     <span style={{ fontSize: 11, color: '#d9730d' }}>
-                      Expires {formatDate(link.expires_at)}
+                      Expires {formatDate(link.expiresAt)}
                     </span>
                   )}
                   <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 4, background: '#dbeafe', color: '#1d4ed8', fontWeight: 600 }}>
@@ -96,7 +96,7 @@ export default function SharedPage() {
                   style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid ' + t.border, background: 'transparent', color: t.textSecondary, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontFamily: "'Sora', sans-serif", textDecoration: 'none' }}>
                   <ExternalLink size={12} /> Open
                 </a>
-                <button onClick={() => revokeMutation.mutate(link.link_id)}
+                <button onClick={() => revokeMutation.mutate(link.linkId)}
                   style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #fecaca', background: 'transparent', color: '#b91c1c', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontFamily: "'Sora', sans-serif" }}>
                   <Trash2 size={12} /> Revoke
                 </button>
