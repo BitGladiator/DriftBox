@@ -310,8 +310,9 @@ const downloadFile = async (req, res, next) => {
     const chunks = await Promise.all(
       chunkIds.map(async (id, index) => {
         const chunk = chunkMap[id];
-        const signedUrl = await storage.getSignedUrl(chunk.storage_path, SIGNED_URL_EXPIRY);
-        return { index, chunkId: id, size: chunk.size, url: signedUrl };
+        // We now return a proxy route handled by this backend service so that the browser does not hit MinIO CORS and signature issues.
+        const proxyUrl = `${process.env.PUBLIC_UPLOAD_URL || 'http://localhost:3002'}/upload/chunk/${id}`;
+        return { index, chunkId: id, size: chunk.size, url: proxyUrl };
       })
     );
 
@@ -331,4 +332,30 @@ const downloadFile = async (req, res, next) => {
   }
 };
 
-module.exports = { initUpload, uploadChunk, completeUpload, uploadStatus, downloadFile };
+const downloadChunk = async (req, res, next) => {
+  try {
+    const { chunkId } = req.params;
+
+    const chunkResult = await db.query(
+      'SELECT size, storage_path FROM chunks WHERE chunk_id = $1',
+      [chunkId]
+    );
+
+    if (chunkResult.rows.length === 0)
+      return res.status(404).json({ error: 'Chunk not found' });
+
+    const chunk = chunkResult.rows[0];
+    const stream = await storage.getChunkStream(chunk.storage_path);
+    
+    res.setHeader('Content-Length', chunk.size);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    stream.pipe(res);
+  } catch (err) {
+    if (err.code === 'NoSuchKey' || err.name === 'NoSuchKey') {
+      return res.status(404).json({ error: 'Chunk object not found in storage' });
+    }
+    next(err);
+  }
+};
+
+module.exports = { initUpload, uploadChunk, completeUpload, uploadStatus, downloadFile, downloadChunk };

@@ -28,6 +28,8 @@ const uploadChunk = (objectName, buffer, size) =>
 const getSignedUrl = (objectName, expirySeconds) =>
   client.presignedGetObject(BUCKET, objectName, expirySeconds);
 
+const getChunkStream = (objectName) =>
+  client.getObject(BUCKET, objectName);
 
 const exists = async (objectName) => {
   try {
@@ -38,8 +40,7 @@ const exists = async (objectName) => {
   }
 };
 
-
 const remove = (objectName) =>
   client.removeObject(BUCKET, objectName);
 
-module.exports = { init, uploadChunk, getSignedUrl, exists, remove, client, BUCKET };
+module.exports = { init, uploadChunk, getSignedUrl, getChunkStream, exists, remove, client, BUCKET };

@@ -62,6 +62,7 @@ export const uploadApi = {
   },
   complete: (sessionId: string) => uploadClient.post('/upload/complete', { sessionId }),
   download: (fileId: string)    => uploadClient.get('/upload/download/' + fileId),
+  downloadChunk: (chunkId: string) => uploadClient.get('/upload/chunk/' + chunkId, { responseType: 'blob' }),
 };
 
 export const metadataApi = {

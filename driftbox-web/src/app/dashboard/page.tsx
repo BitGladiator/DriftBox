@@ -75,9 +75,38 @@ export default function DashboardPage() {
 
   const downloadMutation = useMutation({
     mutationFn: async (id: string) => {
+      addNotification({ type: 'sync', message: 'Preparing download...' });
       const r = await uploadApi.download(id);
-      window.open(r.data.url, '_blank');
+      const { file, chunks } = r.data;
+      
+      chunks.sort((a: any, b: any) => a.index - b.index);
+      
+      addNotification({ type: 'sync', message: `Downloading ${file.name}...` });
+      
+      const downloadedBlobs = [];
+      for (let i = 0; i < chunks.length; i++) {
+        const chunkRes = await uploadApi.downloadChunk(chunks[i].chunkId);
+        downloadedBlobs.push(chunkRes.data);
+      }
+      
+      const finalBlob = new Blob(downloadedBlobs, { type: file.mimeType || 'application/octet-stream' });
+      const url = URL.createObjectURL(finalBlob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name || 'download';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      
+      addNotification({ type: 'sync', message: 'Download complete!' });
+      return file;
     },
+    onError: (error) => {
+      addNotification({ type: 'error', message: 'Failed to download file' });
+      console.error('Download error:', error);
+    }
   });
 
   const card = (isSelected: boolean): React.CSSProperties => ({

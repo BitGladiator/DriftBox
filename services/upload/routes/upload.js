@@ -7,6 +7,7 @@ const {
   completeUpload,
   uploadStatus,
   downloadFile,
+  downloadChunk,
 } = require('../controllers/uploadController');
 
 const router = express.Router();
@@ -28,5 +29,6 @@ router.get('/status/:sessionId',          uploadStatus);
 
 
 router.get('/download/:fileId',           downloadFile);
+router.get('/chunk/:chunkId',             downloadChunk);
 
 module.exports = router;
