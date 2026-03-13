@@ -452,9 +452,6 @@ describe('downloadFile()', () => {
         { chunk_id: 'c2', hash: 'hash2', size: 4194304, storage_path: 'chunks/hash2' },
       ] });
 
-    storage.getSignedUrl
-      .mockResolvedValueOnce('https://minio/chunks/hash1?sig=abc')
-      .mockResolvedValueOnce('https://minio/chunks/hash2?sig=def');
 
     const req = makeReq({ params: { fileId: 'f1' } });
     const res = mockRes();
@@ -464,10 +461,9 @@ describe('downloadFile()', () => {
     const body = res.json.mock.calls[0][0];
     expect(body.file.name).toBe('doc.pdf');
     expect(body.chunks).toHaveLength(2);
-    expect(body.chunks[0].url).toContain('hash1');
-    expect(body.chunks[1].url).toContain('hash2');
+    expect(body.chunks[0].url).toContain('/upload/chunk/c1');
+    expect(body.chunks[1].url).toContain('/upload/chunk/c2');
     expect(body.expiresInSeconds).toBe(900);
-    expect(storage.getSignedUrl).toHaveBeenCalledTimes(2);
   });
 
   test('calls next(err) on db error', async () => {

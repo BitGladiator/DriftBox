@@ -2,42 +2,42 @@
 
 
 jest.mock('./shared/db', () => ({
-  query:     jest.fn(),
+  query: jest.fn(),
   getClient: jest.fn(),
-  pool:      { on: jest.fn() },
+  pool: { on: jest.fn() },
 }));
 jest.mock('./shared/db/redis', () => ({
   setex: jest.fn(),
-  get:   jest.fn(),
-  del:   jest.fn(),
-  keys:  jest.fn().mockResolvedValue([]),
+  get: jest.fn(),
+  del: jest.fn(),
+  keys: jest.fn().mockResolvedValue([]),
 }));
 jest.mock('./shared/storage', () => ({
-  init:         jest.fn().mockResolvedValue(undefined),
-  exists:       jest.fn(),
-  uploadChunk:  jest.fn(),
+  init: jest.fn().mockResolvedValue(undefined),
+  exists: jest.fn(),
+  uploadChunk: jest.fn(),
   getSignedUrl: jest.fn(),
 }));
 jest.mock('./shared/rabbitmq', () => ({
-  connect:  jest.fn().mockResolvedValue(undefined),
-  publish:  jest.fn(),
-  QUEUES:   { FILE_UPLOADED: 'file.uploaded' },
+  connect: jest.fn().mockResolvedValue(undefined),
+  publish: jest.fn(),
+  QUEUES: { FILE_UPLOADED: 'file.uploaded' },
 }));
 jest.mock('prom-client', () => ({
   collectDefaultMetrics: jest.fn(),
   register: { contentType: 'text/plain', metrics: jest.fn().mockResolvedValue('') },
-  Counter:   jest.fn().mockImplementation(() => ({ inc: jest.fn() })),
+  Counter: jest.fn().mockImplementation(() => ({ inc: jest.fn() })),
   Histogram: jest.fn().mockImplementation(() => ({ observe: jest.fn() })),
-  Gauge:     jest.fn().mockImplementation(() => ({ set: jest.fn() })),
+  Gauge: jest.fn().mockImplementation(() => ({ set: jest.fn() })),
 }));
 
 const request = require('supertest');
-const jwt     = require('jsonwebtoken');
-const app     = require('../../index');
-const db      = require('./shared/db');
-const redis   = require('./shared/db/redis');
+const jwt = require('jsonwebtoken');
+const app = require('../../index');
+const db = require('./shared/db');
+const redis = require('./shared/db/redis');
 const storage = require('./shared/storage');
-const mq      = require('./shared/rabbitmq');
+const mq = require('./shared/rabbitmq');
 
 const SECRET = 'upload-test-secret';
 
@@ -45,22 +45,22 @@ const makeToken = (userId = 'user-123', email = 'test@test.com') =>
   jwt.sign({ userId, email }, SECRET, { expiresIn: '15m' });
 
 const makeSession = (overrides = {}) => ({
-  sessionId:      'sess-abc',
-  userId:         'user-123',
-  fileName:       'test.pdf',
-  fileSize:       8 * 1024 * 1024,
-  mimeType:       'application/pdf',
-  folderPath:     '/',
-  totalChunks:    2,
-  chunkSize:      4 * 1024 * 1024,
+  sessionId: 'sess-abc',
+  userId: 'user-123',
+  fileName: 'test.pdf',
+  fileSize: 8 * 1024 * 1024,
+  mimeType: 'application/pdf',
+  folderPath: '/',
+  totalChunks: 2,
+  chunkSize: 4 * 1024 * 1024,
   uploadedChunks: [],
-  createdAt:      Date.now(),
+  createdAt: Date.now(),
   ...overrides,
 });
 
 let server;
 beforeAll((done) => { server = app.listen(0, done); });
-afterAll((done)  => { server.close(done); });
+afterAll((done) => { server.close(done); });
 beforeEach(() => jest.clearAllMocks());
 
 
@@ -104,13 +104,13 @@ describe('POST /upload/init', () => {
     const res = await request(app)
       .post('/upload/init')
       .set('Authorization', 'Bearer ' + token)
-      .send({ fileName: 'test.png' }); 
+      .send({ fileName: 'test.png' });
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/required/);
   });
 
   test('400 — fileSize is negative', async () => {
-    
+
     const res = await request(app)
       .post('/upload/init')
       .set('Authorization', 'Bearer ' + token)
@@ -129,7 +129,7 @@ describe('POST /upload/init', () => {
 
     expect(res.status).toBe(201);
     expect(res.body.sessionId).toBeDefined();
-    expect(res.body.totalChunks).toBe(3);   
+    expect(res.body.totalChunks).toBe(3);
     expect(res.body.chunkSize).toBe(4 * 1024 * 1024);
     expect(redis.setex).toHaveBeenCalledTimes(2);
   });
@@ -190,8 +190,8 @@ describe('POST /upload/chunk', () => {
     storage.exists.mockResolvedValueOnce(false);
     storage.uploadChunk.mockResolvedValueOnce(undefined);
     db.query
-      .mockResolvedValueOnce({ rows: [] })                           
-      .mockResolvedValueOnce({ rows: [{ chunk_id: 'chunk-new' }] }); 
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ chunk_id: 'chunk-new' }] });
 
     const res = await request(app)
       .post('/upload/chunk')
@@ -230,7 +230,7 @@ describe('POST /upload/complete', () => {
   });
 
   test('400 — incomplete upload (not all chunks received)', async () => {
-    const session = makeSession({ totalChunks: 3, uploadedChunks: ['c1', 'c2'] }); 
+    const session = makeSession({ totalChunks: 3, uploadedChunks: ['c1', 'c2'] });
     redis.get.mockResolvedValueOnce(JSON.stringify(session));
 
     const res = await request(app)
@@ -248,19 +248,21 @@ describe('POST /upload/complete', () => {
     redis.del.mockResolvedValue(1);
 
     const mockClient = {
-      query:   jest.fn(),
+      query: jest.fn(),
       release: jest.fn(),
     };
     mockClient.query
-      .mockResolvedValueOnce(undefined) 
-      .mockResolvedValueOnce({ rows: [{
-        file_id: 'new-file-id', name: 'test.pdf',
-        folder_path: '/', size: 8388608,
-        mime_type: 'application/pdf', created_at: new Date().toISOString(),
-      }] })
-      .mockResolvedValueOnce(undefined) 
-      .mockResolvedValueOnce(undefined) 
-      .mockResolvedValueOnce(undefined); 
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce({
+        rows: [{
+          file_id: 'new-file-id', name: 'test.pdf',
+          folder_path: '/', size: 8388608,
+          mime_type: 'application/pdf', created_at: new Date().toISOString(),
+        }]
+      })
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
 
     db.getClient.mockResolvedValueOnce(mockClient);
 
@@ -330,7 +332,7 @@ describe('GET /upload/download/:fileId', () => {
     expect(res.status).toBe(200);
     expect(res.body.file.name).toBe('photo.jpg');
     expect(res.body.chunks).toHaveLength(1);
-    expect(res.body.chunks[0].url).toContain('signed=1');
+    expect(res.body.chunks[0].url).toContain('/upload/chunk/c1');
   });
 });
 
